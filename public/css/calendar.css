@@ -1,0 +1,52 @@
+@font-face {
+    font-family: Lobster;
+    src: url(../fonts/Lobster-Regular.ttf);
+}
+
+@font-face {
+    font-family: SN_Pro_Regular;
+    src: url(../fonts/SN_Pro/static/SNPro-Regular.ttf);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navigationBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    height: 5%;
+}
+
+.navigationBar h1 {
+    font-family: Lobster, cursive;
+    font-size: 25 rem;
+    color: #7029A6;
+    /* text-shadow: 5px 5px 5px #C9A1E8; */
+}
+
+.navigationBar nav a {
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+    font-family: SN-Pro_Regular, sans-serif;
+    text-transform: uppercase;
+    margin-left: 50px;
+    font-weight: 600;
+}
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 95%;
+}

@@ -1,0 +1,582 @@
+@font-face {
+    font-family: Lobster;
+    src: url(../fonts/Lobster-Regular.ttf);
+}
+
+@font-face {
+    font-family: SN_Pro_Regular;
+    src: url(../fonts/SN_Pro/static/SNPro-Regular.ttf);
+}
+
+@font-face {
+    font-family: SN_Pro_Light;
+    src: url(../fonts/SN_Pro/static/SNPro-Light.ttf);
+}
+
+@font-face {
+    font-family: SN_Pro_SemiBold;
+    src: url(../fonts/SN_Pro/static/SNPro-SemiBold.ttf);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navigationBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 30px;
+    height: 5%;
+}
+
+.navigationBar h1 {
+    font-family: Lobster, cursive;
+    font-size: 25 rem;
+    color: #7029A6;
+}
+
+.navigationBar nav a {
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+    font-family: SN_Pro_Light, sans-serif;
+    text-transform: uppercase;
+    margin-left: 50px;
+    font-weight: 600;
+}
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 95%;
+}
+
+.mainContainer h1 {
+    font-family: SN_Pro_SemiBold, sans-serif;
+    font-size: clamp(2rem, 5vw, 3.125rem);;
+    color: #7029A6;
+    margin-bottom: 3%;
+}
+
+.options {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;   
+    gap: 60px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.option {
+    flex: 1;                     
+    max-width: 350px;            
+    display: flex;
+    flex-direction: column;
+    justify-content: center;     
+    align-items: center;         
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    gap: 40px;
+    padding: 80px 30px;
+    text-align: center;
+}
+
+.option h3 {
+    font-family: Sn_Pro_Regular, sans-serif;
+    font-size: clamp(1rem, 0.75vw + 1rem, 1.375rem);
+    color: black;
+}
+
+.optionButton {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-family: SN_Pro_Regular, sans-serif;
+    text-transform: uppercase;
+    color: white;
+    background-color: #7029A6;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.optionButton:hover {
+    background-color: #5a1f7a;
+    transform: scale(1.05);
+}
+
+.textInput {
+    padding: 10px;
+    flex: 1;
+    font-size: 13px;
+    font-family: SN_Pro_Regular, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.inputRow {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+}
+
+.fields h3 {
+    font-family: Sn_Pro_Regular, sans-serif;
+    font-size: 20px;
+    color: black;
+}
+
+.fields input {
+    padding: 10px;
+    font-size: 13px;
+    font-family: SN_Pro_Regular, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.dateInputs {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* ====== CALENDAR PAGE ====== */
+
+.mainContainerCalendar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 95%;
+    padding: 40px 20px;
+}
+
+.CalendarHeader {
+    margin-bottom: 40px;
+    padding: 0 30px;
+}
+
+.CalendarHeader h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #7029A6;
+    font-family: Sn_Pro_SemiBold, sans-serif;
+}
+
+.CalendarHeader h3 {
+    font-size: 16px;
+    font-family: Sn_Pro_Light, sans-serif;
+}
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+}
+
+.calendarContainer {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* Participants panel */
+
+.Participants {
+    flex: 1;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.Participants h2 {
+    font-family: SN_Pro_Regular;
+    font-size: 22px;
+    color: black;
+    margin-bottom: 20px;
+}
+
+.Participants ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-family: SN_Pro_Regular, sans-serif;
+}
+
+/* Calendar panel */
+
+.calendarView {
+    flex: 3;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.calendarView h2 {
+    font-family: SN_Pro_Regular;
+    font-size: 22px;
+    color: black;
+    margin-bottom: 20px;
+}
+
+#calendarGrid {
+    margin-top: 20px;
+    min-height: 300px;
+    background: #f7f3fb;
+    border-radius: 10px;
+}
+
+/* Scrollable date grid */
+
+#calendarGrid .grid-inner {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    padding: 8px;
+}
+
+.calendar-day {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    height: 520px; /* fixed viewport for vertical scrolling inside */
+}
+
+.day-header {
+    padding: 10px;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    background: linear-gradient(180deg, rgba(112,41,166,0.06), transparent);
+}
+
+.day-body {
+    padding: 0;
+    overflow-y: auto;
+    position: relative;
+    flex: 1;
+}
+
+.calendar-day.outside-range {
+    background: transparent;
+    box-shadow: none;
+}
+
+.calendar-day.outside-range .day-body {
+    background: #f7f3fb;
+}
+
+.hours {
+    position: relative;
+    width: 100%;
+}
+
+.hour-row {
+    height: 40px;
+    border-top: 1px solid #f0eef6;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.hour-label {
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    font-size: 11px;
+    color: #666;
+}
+
+.availability-block {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    border-radius: 6px;
+    padding: 4px 6px;
+    color: white;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+/* ====== POPUP ====== */
+
+.popup {
+    font-family: SN_Pro_Regular, sans-serif;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.3s ease;
+}
+
+.popup.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+#popup .popupContent {
+    background: white;
+    position: relative; 
+    padding: 40px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+#popup .popupContent input {
+    width: 100%;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+    transition: 0.2s ease;
+}
+
+.closeBtn:hover {
+    color: #7029A6;
+    transform: scale(1.2);
+}
+
+.mainContainerCalendar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 95%;
+    padding: 40px 20px;
+}
+
+#editBtn {
+    border: #7029A6 2px solid; 
+    background: transparent;
+    color: #7029A6;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.color-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.participant-name {
+    color: black;
+    font-weight: 500;
+}
+
+#availabilityPopup .popupContent {
+    background: white;
+    position: relative; 
+    padding: 40px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.popupContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+}
+
+#availabilityPopup .popupContent input {
+    width: 100%;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.coderow {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;   /* bliżej description */
+}
+
+#calendarCode {
+    font-size: 16px;
+    font-family: SN_Pro_Regular, sans-serif;
+}
+
+#copyBtn {
+    font-size: 13px;
+    padding: 6px 14px;
+}
+
+.closeAvailabilityBtn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+    transition: 0.2s ease;
+}
+
+.availabilityRow {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.radioOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Ukrycie defaultowego */
+.radioOption input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #bbb;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.radioOption input[type="radio"]:checked {
+    border-color: #6c63ff;
+}
+
+.radioOption input[type="radio"]:checked::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background: #5a1f7a;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.5;
+    padding-left: 10px;
+}
+
+/* Calendar Grid */
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+    border: 1px solid #ddd;
+    min-height: 220px;
+    position: relative;
+}
+
+.calendar-day.empty {
+    border: none;
+    background: transparent;
+}
+
+.day-header {
+    padding: 6px;
+    font-weight: 600;
+}
+
+.hours {
+    position: relative;
+}
+
+.hour-row {
+    height: 40px;
+    border-top: 1px solid #eee;
+}
+
+.calendar-grid-wrapper {
+    display: flex;
+}
+
+.hours-rail {
+    width: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 10px;
+}
+
+.hour-rail-label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    font-size: 12px;
+    color: #666;
+    box-sizing: border-box;
+    padding-top: 2px;
+}
+
+.delete-btn:hover {
+    color: red;
+    opacity: 1;
+}
+
+@media (max-width: 500px) {
+    .inputRow {
+        flex-direction: column;
+    }
+}

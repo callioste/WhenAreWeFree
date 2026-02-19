@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html lang="en">    
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Home </title>
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/index.js" defer></script>
+        <script src="js/openCalendar.js"></script>
+    </head>
+
+    <body>
+        <div class="navigationBar">
+            <h1> WhenAreWeFree </h1>
+            <nav>
+                <a href="/"> Home </a>
+                <a href="/how-to-use"> How to use </a>
+            </nav>
+        </div>
+        <div class="mainContainer">
+            <h1> What do you want to do? </h1>
+            <div class="options">
+                <section class="option">
+                    <h3> Create new calendar </h3>
+                    <button class="optionButton" onclick="window.location.href='create-calendar.html'"> Create </button>
+                </section>
+                <section class="option"> 
+                    <h3> Open existing calendar with code </h3>
+                    <div class="inputRow">
+                        <input type="text" class="textInput" placeholder="Enter code here">
+                        <button class="optionButton" onclick="openCalendar()"> Open </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </body>
+</html>

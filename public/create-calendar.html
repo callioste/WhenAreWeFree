@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Create new calendar </title>
+        <link rel="stylesheet" href="css/main.css">
+        <script type="module" src="js/createCalendar.js" defer></script>
+    </head>
+
+    <body>
+        <div class="navigationBar">
+            <h1> WhenAreWeFree </h1>
+            <nav>
+                <a href="/"> Home </a>
+                <a href="/how-to-use"> How to use </a>
+            </nav>
+        </div>
+        <div class="mainContainer">
+            <h1> Create new calendar </h1>
+            <form class="fields" id="calendarForm" method="post">
+                <h3> Enter name </h3>
+                <input type="text" name="name" class="textInput" placeholder="Enter name here" required>
+
+                <h3> Enter description (optional)</h3>
+                <textarea name="description" class="textInput" placeholder="Enter description here"></textarea>
+
+                <div class="dateInputs">
+                    <div class="dateInput">
+                        <h3> Enter start date</h3>
+                        <input type="date" id="start_date" name="start_date" required>
+                    </div>
+                    <div class="dateInput">   
+                        <h3> Enter end date</h3>
+                        <input type="date" id="end_date" name="end_date" required>
+                    </div>
+                </div>
+                <div style="display:flex;gap:16px;margin-top:12px;align-items:center;">
+                    <div>
+                        <h3>Meeting hours start</h3>
+                        <select id="start_hour" name="start_hour">
+                        </select>
+                    </div>
+                    <div>
+                        <h3>Meeting hours end</h3>
+                        <select id="end_hour" name="end_hour">
+                        </select>
+                    </div>
+                </div>
+                <button class="optionButton" type="submit"> Create calendar</button>
+            </form>
+        </div>
+    </body>
+</html>

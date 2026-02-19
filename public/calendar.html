@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html lang="en">    
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> WhenAreWeFree - Calendar </title>
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+
+    <body>
+        <div class="navigationBar">
+            <h1> WhenAreWeFree </h1>
+            <nav>
+                <a href="/"> Home </a>
+                <a href="/how-to-use"> How to use </a>
+            </nav>
+        </div>
+        <div class="mainContainerCalendar">
+            <section class="CalendarHeader">
+                <div class="headerRow">
+                    <h1 id="calendarName"> Calendar name </h1>
+                    <div class="buttonRow">
+                        <button id="editBtn" class="optionButton"> Add availability block </button>
+                        <button id="joinBtn" class="optionButton"> Add participant </button>
+                    </div>  
+                </div>
+                <h3 id="calendarDescription"> Calendar description </h3>
+                <div class="coderow">
+                    <h3 id="calendarCode"></h3>
+                    <button id="copyBtn" class="optionButton">Copy</button>
+                </div>
+                
+            </section>
+
+            <section class="calendarContainer">
+                <section class="calendarView">
+                    <h2> Availability calendar </h2>
+                    <div id="calendarGrid"></div>
+                </section>
+                
+                <section class="Participants">
+                    <h2> Participants </h2>
+                    <ul id="ParticipantsList"></ul>
+                </section>
+                
+            </section>
+        </div>
+
+        <!-- Popup for joining calendar -->
+        <div id="popup" class="popup">
+            <div class="popupContent">
+                <span class="closeBtn">&times;</span>
+
+                <h2>Enter your name to join calendar</h2>
+                <input type="text" id="textInput" placeholder="Enter name here">
+                <button id="submitBtn" class="optionButton"> Join calendar </button>
+            </div>
+        </div>
+
+        <!-- Popup for adding availability block -->
+        <div id="availabilityPopup" class="popup">
+            <div class="popupContent">
+                <span class="closeAvailabilityBtn">&times;</span>
+
+                <h2 id="availabilityTitle">Add availability block</h2>
+                <div class="popupContainer"> 
+                    <input type="hidden" id="availabilityId">
+
+                    <label for="participantSelect">Participant:</label>
+                    <select id="participantSelect"></select>
+
+                    <div style="height:8px"></div>
+
+                    <label for="startTime">Start (date & time):</label>
+                    <input type="datetime-local" id="startTime">
+
+                    <label for="endTime">End (date & time):</label>
+                    <input type="datetime-local" id="endTime">
+
+                    <div class="availabilityRow">
+                        <label class="radioOption">
+                            <input type="radio" name="availabilityStatus" value="available" checked>
+                            <span>Fully available</span>
+                        </label>
+
+                        <label class="radioOption">
+                            <input type="radio" name="availabilityStatus" value="maybe">
+                            <span>Maybe</span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+                        <button id="addavailabilityBtn" class="optionButton"> Save </button>
+                        <button id="deleteAvailabilityBtn" class="optionButton" style="background:#c0392b;"> Delete </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="js/calendarView.js"></script>
+    </body>
+</html>
