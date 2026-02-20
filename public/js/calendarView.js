@@ -8,127 +8,193 @@ if (!token) {
     window.location.href = "/";
 }
 
+// helper: local participant id stored per calendar token
+function getLocalParticipantId(){
+    try{ const v = localStorage.getItem('participant:' + token); return v ? Number(v) : null;}catch(e){return null}
+}
+
+function setLocalParticipantId(id){
+    try{ localStorage.setItem('participant:' + token, String(id)); }catch(e){}
+}
+
 // Open popup for editing existing block
 function openEditBlockPopup(block){
-    const availabilityId = document.getElementById('availabilityId');
-    const participantSelect = document.getElementById('participantSelect');
-    const statusRadios = document.getElementsByName('availabilityStatus');
-    const startTimeInput = document.getElementById('startTime');
-    const endTimeInput = document.getElementById('endTime');
-    const title = document.getElementById('availabilityTitle');
-    const deleteBtn = document.getElementById('deleteAvailabilityBtn');
+    const editPopup = document.getElementById('editAvailabilityPopup');
+    const availabilityId = document.getElementById('editAvailabilityId');
+    const participantSelect = document.getElementById('editParticipantSelect');
+    const startTimeInput = document.getElementById('editStartTime');
+    const endTimeInput = document.getElementById('editEndTime');
 
     availabilityId.value = block.id || '';
     if (participantSelect) participantSelect.value = block.participant_id || '';
-    for (const r of statusRadios) if (r.value === (block.status || 'available')) r.checked = true;
-    // prefer datetime-local inputs if present
+    
     if (startTimeInput && endTimeInput){
-        // block.start_time is HH:MM, block.date is YYYY-MM-DD
-        startTimeInput.value = `${block.date}T${block.start_time}`;
-        endTimeInput.value = `${block.date}T${block.end_time}`;
-    } else {
-        // fallback to date+hour fields if any
-        const startDate = document.getElementById('startDate');
-        const endDate = document.getElementById('endDate');
-        const startHourSel = document.getElementById('startHour');
-        const endHourSel = document.getElementById('endHour');
-        const date = block.date;
-        if (startDate) startDate.value = date;
-        if (endDate) endDate.value = date;
-        if (startHourSel) startHourSel.value = String(Number(block.start_time.split(':')[0]));
-        if (endHourSel) endHourSel.value = String(Number(block.end_time.split(':')[0]));
+        startTimeInput.value = `${block.start_date}T${block.start_time}`;
+        endTimeInput.value   = `${block.end_date}T${block.end_time}`;
     }
-    title.textContent = 'Edit availability block';
-    deleteBtn.style.display = 'inline-block';
-    availabilityPopup.classList.add('active');
+    
+    editPopup.classList.add('active');
 }
 
 // Reset popup for creating
 function openCreatePopup(){
-    const availabilityId = document.getElementById('availabilityId');
+    const addPopup = document.getElementById('availabilityPopup');
     const participantSelect = document.getElementById('participantSelect');
-    const statusRadios = document.getElementsByName('availabilityStatus');
-    const startInput = document.getElementById('startTime');
-    const endInput = document.getElementById('endTime');
-    const title = document.getElementById('availabilityTitle');
-    const deleteBtn = document.getElementById('deleteAvailabilityBtn');
-
-    availabilityId.value = '';
-    if (participantSelect && participantSelect.options.length > 0) participantSelect.selectedIndex = 0;
-    for (const r of statusRadios) r.checked = (r.value === 'available');
     const startTimeInput = document.getElementById('startTime');
     const endTimeInput = document.getElementById('endTime');
+
+    if (participantSelect && participantSelect.options.length > 0) participantSelect.selectedIndex = 0;
+    
     if (startTimeInput && calendarMinDate){
         startTimeInput.value = `${calendarMinDate}T09:00`;
     }
     if (endTimeInput && calendarMinDate){
         endTimeInput.value = `${calendarMinDate}T10:00`;
     }
-    title.textContent = 'Add availability block';
-    deleteBtn.style.display = 'none';
-    availabilityPopup.classList.add('active');
+    
+    addPopup.classList.add('active');
 }
 
-// wire popup save/delete actions
-const saveBtn = document.getElementById('addavailabilityBtn');
-if (saveBtn){
-    saveBtn.addEventListener('click', async () => {
-        const availabilityId = document.getElementById('availabilityId').value;
-        const participantId = document.getElementById('participantSelect').value;
-        const status = document.querySelector('input[name="availabilityStatus"]:checked').value;
-        const startDateVal = document.getElementById('startDate').value;
-        const endDateVal = document.getElementById('endDate').value;
-        // prefer datetime-local inputs if present
+// Handler for ADD popup save button
+const addBtn = document.getElementById('addavailabilityBtn');
+if (addBtn){
+    addBtn.addEventListener('click', async () => {
+        const addPopup = document.getElementById('availabilityPopup');
+        const participantSelectEl = document.getElementById('participantSelect');
         const startTimeInput = document.getElementById('startTime');
         const endTimeInput = document.getElementById('endTime');
-        let date, start_time, end_time;
-        if (startTimeInput && endTimeInput && startTimeInput.value && endTimeInput.value){
-            // datetime-local value format: YYYY-MM-DDTHH:MM
-            const s = startTimeInput.value; // e.g. 2026-02-19T09:30
-            const e = endTimeInput.value;
-            date = s.split('T')[0];
-            start_time = s.split('T')[1];
-            end_time = e.split('T')[1];
-            // basic validation
-            if (s >= e) return alert('Start must be before end');
-        } else {
-            // fallback to hour-only fields
-            const startHourVal = document.getElementById('startHour') ? document.getElementById('startHour').value : null;
-            const endHourVal = document.getElementById('endHour') ? document.getElementById('endHour').value : null;
-            if (startHourVal === null || endHourVal === null || !startDateVal) return alert('Missing fields');
-            const startHourNum = parseInt(String(startHourVal).trim(), 10);
-            const endHourNum = parseInt(String(endHourVal).trim(), 10);
-            if (isNaN(startHourNum) || isNaN(endHourNum)) return alert('Please enter valid hour numbers');
-            if (startHourNum < calendarStartHour || startHourNum > calendarEndHour || endHourNum < calendarStartHour || endHourNum > calendarEndHour) return alert(`Hours must be between ${calendarStartHour} and ${calendarEndHour}`);
-            if (startHourNum >= endHourNum) return alert('Start hour must be before end hour');
-            date = startDateVal;
-            start_time = `${String(startHourNum).padStart(2,'0')}:00`;
-            end_time = `${String(endHourNum).padStart(2,'0')}:00`;
-        }
 
-        try{
-            if (availabilityId){
-                await updateavailabilityBlock(availabilityId, date, start_time, end_time, status);
-            } else {
-                await createavailabilityBlock({ participant_id: participantId, date, start_time, end_time, status });
+        const participantId = participantSelectEl && participantSelectEl.value
+        ? Number(participantSelectEl.value)
+        : null;
+
+        if (startTimeInput && endTimeInput && startTimeInput.value && endTimeInput.value){
+            const s = startTimeInput.value;
+            const e = endTimeInput.value;
+
+            if (s >= e) return alert('Start must be before end');
+
+            // Helper: round time to nearest :00 or :30
+            function roundToHalfHour(timeStr) {
+                const [h, m] = timeStr.split(':').map(Number);
+                const rounded = m < 15 ? 0 : (m < 45 ? 30 : 60);
+                if (rounded === 60) {
+                    return `${String((h + 1) % 24).padStart(2, '0')}:00`;
+                }
+                return `${String(h).padStart(2, '0')}:${String(rounded).padStart(2, '0')}`;
             }
-            availabilityPopup.classList.remove('active');
-            loadCalendar();
-        }catch(err){
-            alert('Failed to save availability: ' + err.message);
+
+            const start_date = s.split('T')[0];
+            let start_time = s.split('T')[1];
+            start_time = roundToHalfHour(start_time);
+
+            const end_date = e.split('T')[0];
+            let end_time = e.split('T')[1];
+            end_time = roundToHalfHour(end_time);
+
+            const requesterId = getLocalParticipantId();
+            if (!requesterId) return alert('You must join the calendar before adding availability.');
+            if (!participantId) return alert('Select a participant before saving.');
+
+            try{
+                await createavailabilityBlock({
+                    participant_id: participantId,
+                    start_date,
+                    start_time,
+                    end_date,
+                    end_time,
+                }, requesterId);
+
+                addPopup.classList.remove('active');
+                loadCalendar();
+
+            } catch(err){
+                alert('Failed to save availability: ' + err.message);
+            }
+        } else {
+            alert('Please use the date/time inputs to set availability.');
         }
     });
 }
 
+// Handler for EDIT popup update button
+const updateBtn = document.getElementById('updateAvailabilityBtn');
+if (updateBtn){
+    updateBtn.addEventListener('click', async () => {
+        const editPopup = document.getElementById('editAvailabilityPopup');
+        const availabilityIdEl = document.getElementById('editAvailabilityId');
+        const participantSelectEl = document.getElementById('editParticipantSelect');
+        const startTimeInput = document.getElementById('editStartTime');
+        const endTimeInput = document.getElementById('editEndTime');
+
+        const availabilityId = availabilityIdEl ? availabilityIdEl.value : '';
+        const participantId = participantSelectEl && participantSelectEl.value
+        ? Number(participantSelectEl.value)
+        : null;
+
+        if (startTimeInput && endTimeInput && startTimeInput.value && endTimeInput.value){
+            const s = startTimeInput.value;
+            const e = endTimeInput.value;
+
+            if (s >= e) return alert('Start must be before end');
+
+            // Helper: round time to nearest :00 or :30
+            function roundToHalfHour(timeStr) {
+                const [h, m] = timeStr.split(':').map(Number);
+                const rounded = m < 15 ? 0 : (m < 45 ? 30 : 60);
+                if (rounded === 60) {
+                    return `${String((h + 1) % 24).padStart(2, '0')}:00`;
+                }
+                return `${String(h).padStart(2, '0')}:${String(rounded).padStart(2, '0')}`;
+            }
+
+            const start_date = s.split('T')[0];
+            let start_time = s.split('T')[1];
+            start_time = roundToHalfHour(start_time);
+
+            const end_date = e.split('T')[0];
+            let end_time = e.split('T')[1];
+            end_time = roundToHalfHour(end_time);
+
+            const requesterId = getLocalParticipantId();
+            if (!requesterId) return alert('You must join the calendar before editing availability.');
+            if (!participantId) return alert('Select a participant before saving.');
+
+            try{
+                await updateavailabilityBlock(
+                    availabilityId,
+                    start_date,
+                    start_time,
+                    end_date,
+                    end_time,
+                    requesterId
+                );
+
+                editPopup.classList.remove('active');
+                loadCalendar();
+
+            } catch(err){
+                alert('Failed to update availability: ' + err.message);
+            }
+        } else {
+            alert('Please use the date/time inputs to set availability.');
+        }
+    });
+}
+
+// Handler for EDIT popup delete button
 const delBtn = document.getElementById('deleteAvailabilityBtn');
 if (delBtn){
     delBtn.addEventListener('click', async () => {
-        const availabilityId = document.getElementById('availabilityId').value;
+        const editPopup = document.getElementById('editAvailabilityPopup');
+        const availabilityId = document.getElementById('editAvailabilityId').value;
         if (!availabilityId) return;
         if (!confirm('Delete this availability block?')) return;
         try{
-            await deleteavailabilityBlock(availabilityId);
-            availabilityPopup.classList.remove('active');
+            const requesterId = getLocalParticipantId();
+            if (!requesterId) return alert('You must join the calendar before deleting availability.');
+            await deleteavailabilityBlock(availabilityId, requesterId);
+            editPopup.classList.remove('active');
             loadCalendar();
         }catch(err){
             alert('Failed to delete availability: ' + err.message);
@@ -140,14 +206,18 @@ if (delBtn){
 
 // populate participant select after loading calendar
 function populateParticipantSelect(participants){
-    const sel = document.getElementById('participantSelect');
-    if (!sel) return;
-    sel.innerHTML = '';
-    participants.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = p.name;
-        sel.appendChild(opt);
+    const addSel = document.getElementById('participantSelect');
+    const editSel = document.getElementById('editParticipantSelect');
+    
+    [addSel, editSel].forEach(sel => {
+        if (!sel) return;
+        sel.innerHTML = '';
+        participants.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name;
+            sel.appendChild(opt);
+        });
     });
 }
 
@@ -223,10 +293,14 @@ if (joinBtn && joinPopup) {
             if (!name) return;
 
             try {
-                await createParticipant({
-                    calendar_token: token,
-                    name
-                });
+                const params = new URLSearchParams(window.location.search);
+                const isCreator = params.get('created');
+
+                const body = { calendar_token: token, name };
+                if (isCreator) body.set_as_owner = true;
+
+                const resp = await createParticipant(body);
+                if (resp && resp.id) setLocalParticipantId(resp.id);
 
                 joinPopup.classList.remove("active");
                 nameInput.value = "";
@@ -288,6 +362,17 @@ if (editBtn && availabilityPopup) {
     }
 }
 
+// Close button for edit popup
+const editAvailabilityPopup = document.getElementById("editAvailabilityPopup");
+if (editAvailabilityPopup) {
+    const closeEditAvailabilityBtn = editAvailabilityPopup.querySelector(".closeEditAvailabilityBtn");
+    if (closeEditAvailabilityBtn) {
+        closeEditAvailabilityBtn.addEventListener("click", () => {
+            editAvailabilityPopup.classList.remove("active");
+        });
+    }
+}
+
 /* =========================
    LOAD CALENDAR
 ========================= */
@@ -307,15 +392,20 @@ async function loadCalendar() {
         document.getElementById("calendarCode").textContent =
             "Code: " + data.calendar.token;
 
+        const localId = getLocalParticipantId();
+        const ownerId = data.calendar ? data.calendar.owner_participant_id : null;
         document.getElementById("ParticipantsList").innerHTML =
             (data.participants || [])
-                .map(p => `
+                .map(p => {
+                    const showDelete = localId && ownerId && Number(localId) === Number(ownerId);
+                    return `
                     <li class="participant-item">
                         <span class="color-box" style="background:${p.color || '#ccc'}"></span>
                         <span class="participant-name">${p.name}</span>
-                        <button class="delete-btn" data-participant-id="${p.id}">✕</button>
+                        ${showDelete ? `<button class="delete-btn" data-participant-id="${p.id}">✕</button>` : ''}
                     </li>
-                `)
+                `
+                })
                 .join("");
 
         // set availability popup date bounds from calendar
@@ -349,6 +439,20 @@ async function loadCalendar() {
                 if (endInput.value < endInput.min) endInput.value = endInput.min;
                 if (endInput.value > endInput.max) endInput.value = endInput.max;
             }
+
+            // Set bounds for edit popup inputs
+            const editStartInput = document.getElementById("editStartTime");
+            const editEndInput = document.getElementById("editEndTime");
+
+            if (editStartInput){
+                editStartInput.min = toDateTimeLocal(calendarMinDate, String(startHour).padStart(2,'0')+":00");
+                editStartInput.max = toDateTimeLocal(calendarMaxDate, String(endHour).padStart(2,'0')+":00");
+            }
+
+            if (editEndInput){
+                editEndInput.min = toDateTimeLocal(calendarMinDate, String(startHour).padStart(2,'0')+":01");
+                editEndInput.max = toDateTimeLocal(calendarMaxDate, String(endHour).padStart(2,'0')+":59");
+            }
                 // populate hour selects
                 populateHourSelects(startHour, endHour);
                 // set date input bounds and defaults
@@ -365,6 +469,18 @@ async function loadCalendar() {
                     if (!endDateInput.value) endDateInput.value = calendarMinDate;
                 }
             // render calendar grid for the date range, include participants and availability
+            // populate participant select used by availability popup
+            populateParticipantSelect(data.participants || []);
+            const localId = getLocalParticipantId();
+            const participantSelectEl = document.getElementById('participantSelect');
+            const editParticipantSelectEl = document.getElementById('editParticipantSelect');
+            if (participantSelectEl && localId) {
+                participantSelectEl.value = String(localId);
+            }
+            if (editParticipantSelectEl && localId) {
+                editParticipantSelectEl.value = String(localId);
+            }
+
             renderCalendarGrid(calendarMinDate, calendarMaxDate, data.participants || [], data.availabilityBlocks || [], startHour, endHour);
         }
 
@@ -388,8 +504,14 @@ if (participantsListEl) {
 
     const ok = confirm("Delete this participant?");
     if (!ok) return;
-        await deleteParticipant(participantId, token);
+    const requesterId = getLocalParticipantId();
+    if (!requesterId) return alert('Only calendar owner can delete participants.');
+    try{
+        await deleteParticipant(participantId, requesterId);
         loadCalendar();
+    }catch(err){
+        alert('Failed to delete participant: ' + err.message);
+    }
   });
 }
 
@@ -419,10 +541,10 @@ function formatDateLabel(date){
 
 function renderCalendarGrid(startStr, endStr, participants = [], blocks = [], startHour = 0, endHour = 23){
 
-    const HOUR_HEIGHT = 40;
-    const HOURS = Math.max(1, (endHour - startHour + 1));
-    
     if (!startStr || !endStr) return;
+
+    const HOUR_HEIGHT = 40;
+    const HOURS = Math.max(1, (endHour - startHour));
 
     const start = parseYMD(startStr);
     const end = parseYMD(endStr);
@@ -431,176 +553,231 @@ function renderCalendarGrid(startStr, endStr, participants = [], blocks = [], st
 
     grid.innerHTML = '';
 
-    // wrapper: left hours rail + right main calendar (header + body)
-    const gridWrapper = document.createElement('div');
-    gridWrapper.className = 'calendar-grid-wrapper';
-
-    // hours rail (left column)
-    const hoursRail = document.createElement('div');
-    hoursRail.className = 'hours-rail';
-
-    hoursRail.style.height = (HOURS * HOUR_HEIGHT) + 'px';
-
-    for (let i = 0; i < HOURS; i++){
-        const hour = startHour + i;
-
-        const label = document.createElement('div');
-        label.className = 'hour-rail-label';
-        label.style.height = HOUR_HEIGHT + 'px';
-        label.textContent = hour.toString().padStart(2,'0') + ':00';
-
-        hoursRail.appendChild(label);
-    }
-
-    // main calendar area (right side)
-    const mainArea = document.createElement('div');
-    mainArea.className = 'calendar-main';
-
-    const monthLabel = document.createElement('div');
-    monthLabel.className = 'calendar-month-label';
-    monthLabel.textContent = start.toLocaleString(undefined, { month: 'long', year: 'numeric' });
-    mainArea.appendChild(monthLabel);
-
-    const headerRow = document.createElement('div');
-    headerRow.className = 'calendar-header';
     const weekdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-    weekdays.forEach(d => {
-        const el = document.createElement('div');
-        el.className = 'calendar-weekday';
-        el.textContent = d;
-        headerRow.appendChild(el);
-    });
-    mainArea.appendChild(headerRow);
 
-    const body = document.createElement('div');
-    body.className = 'calendar-body';
-    mainArea.appendChild(body);
+    // iterate month-by-month and create a separate grid for each month intersecting the range
+    let cur = new Date(start);
+    while (cur <= end){
+        const year = cur.getFullYear();
+        const month = cur.getMonth();
 
-    gridWrapper.appendChild(hoursRail);
-    gridWrapper.appendChild(mainArea);
-    grid.appendChild(gridWrapper);
+        const monthStart = new Date(year, month, 1);
+        const monthEnd = new Date(year, month + 1, 0);
 
-    // 0=Sun → zamieniamy na 6, 1=Mon → 0
-    const startDayIndex = (start.getDay() + 6) % 7;
+        // segment of this month that belongs to requested range
+        const segStart = (cur > monthStart) ? new Date(cur) : new Date(monthStart);
+        const segEnd = (end < monthEnd) ? new Date(end) : new Date(monthEnd);
 
-    // puste pola przed start_date
-    for (let i = 0; i < startDayIndex; i++){
-        const empty = document.createElement('div');
-        empty.className = 'calendar-day empty';
-        body.appendChild(empty);
-    }
+        // container for this month
+        const monthContainer = document.createElement('div');
+        monthContainer.className = 'calendar-month-container';
 
-    const HOUR_HEIGHT = 40;
-    const HOURS = Math.max(1, (endHour - startHour + 1));
+        // Month label
+        const monthLabel = document.createElement('div');
+        monthLabel.className = 'calendar-month-label';
+        monthLabel.textContent = segStart.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+        monthContainer.appendChild(monthLabel);
 
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)){
+        // Weekday header (repeat per month)
+        const headerRow = document.createElement('div');
+        headerRow.className = 'calendar-header';
+        weekdays.forEach(d => {
+            const el = document.createElement('div');
+            el.className = 'calendar-weekday';
+            el.textContent = d;
+            headerRow.appendChild(el);
+        });
+        monthContainer.appendChild(headerRow);
 
-        const dayCol = document.createElement('div');
-        dayCol.className = 'calendar-day';
+        // body for days
+        const body = document.createElement('div');
+        body.className = 'calendar-body';
+        monthContainer.appendChild(body);
 
-        const header = document.createElement('div');
-        header.className = 'day-header';
-        header.textContent = d.getDate();
-
-        const hours = document.createElement('div');
-        hours.className = 'hours';
-        hours.style.height = (HOURS * HOUR_HEIGHT) + 'px';
-
-        for (let i = 0; i < HOURS; i++){
-            const hourRow = document.createElement('div');
-            hourRow.className = 'hour-row';
-            hours.appendChild(hourRow);
+        // compute empties so the first visible day sits under correct weekday
+        const startDayIndex = (segStart.getDay() + 6) % 7;
+        for (let i = 0; i < startDayIndex; i++){
+            const empty = document.createElement('div');
+            empty.className = 'calendar-day empty';
+            body.appendChild(empty);
         }
 
-        dayCol.appendChild(header);
-        dayCol.appendChild(hours);
-        body.appendChild(dayCol);
+        // generate visible days for this month segment
+        for (let d = new Date(segStart); d <= segEnd; d.setDate(d.getDate() + 1)){
+            const dayCol = document.createElement('div');
+            dayCol.className = 'calendar-day';
+
+            // day header
+            const header = document.createElement('div');
+            header.className = 'day-header';
+            header.textContent = d.getDate();
+
+            // hours container
+            const hours = document.createElement('div');
+            hours.className = 'hours';
+            hours.style.height = (HOURS * HOUR_HEIGHT + HOURS) + 'px';
+
+            for (let i = 0; i < HOURS; i++){
+                const hour = startHour + i;
+
+                const hourRow = document.createElement('div');
+                hourRow.className = 'hour-row';
+                hourRow.style.height = HOUR_HEIGHT + 'px';
+
+                const label = document.createElement('div');
+                label.className = 'hour-label';
+                label.textContent = hour.toString().padStart(2,'0') + ':00';
+
+                hourRow.appendChild(label);
+                hours.appendChild(hourRow);
+            }
+            dayCol.appendChild(header);
+            dayCol.appendChild(hours);
+
+            // render availability blocks for this date
+            const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            // helper maps
+            const participantsById = {};
+            (participants || []).forEach(p => { participantsById[String(p.id)] = p; });
+
+            // Render vertical participant bars (columns) inside the day column so many participants fit side-by-side
+            const dateStart = new Date(`${dateStr}T${String(startHour).padStart(2,'0')}:00`);
+                const dateEnd   = new Date(`${dateStr}T${String(endHour).padStart(2,'0')}:00`);
+
+                const dateBlocks = (blocks || []).map(b => {
+
+                    const blockStart = new Date(`${b.start_date || b.date}T${b.start_time}`);
+                    const blockEnd   = new Date(`${b.end_date   || b.date}T${b.end_time}`);
+
+                    // jeśli blok w ogóle nie przecina się z tym dniem kalendarza
+                    if (blockEnd <= dateStart || blockStart >= dateEnd) return null;
+
+                    // przycinamy do granic dnia kalendarza (NIE 00:00-23:59)
+                    const effectiveStart = new Date(Math.max(blockStart, dateStart));
+                    const effectiveEnd   = new Date(Math.min(blockEnd, dateEnd));
+
+                    const startMinutes =
+                        effectiveStart.getHours() * 60 + effectiveStart.getMinutes();
+
+                    const endMinutes =
+                        effectiveEnd.getHours() * 60 + effectiveEnd.getMinutes();
+
+                    return Object.assign({}, b, {
+                        startMinutes,
+                        endMinutes
+                    });
+
+                }).filter(Boolean);
+
+            const participantOrder = (participants || []).map(p => String(p.id));
+            const maxParticipants = Math.max(1, participantOrder.length);
+
+            // determine per-participant column widths (allow variable thickness: some wider, some narrower)
+            // strategy: allocate base percent and add a small deterministic variation for visual variety
+            const basePercent = 100 / Math.max(6, maxParticipants);
+            // compute raw widths with a small deterministic variation, enforce a pixel-friendly minimum
+            const rawWidths = participantOrder.map((pid, idx) => {
+                const variation = ((idx * 37) % 11) - 5; // range -5..+5
+                const w = Math.max(4, basePercent + variation * 0.6);
+                return w;
+            });
+
+            // normalize widths so they sum to 100% (prevents overlaps)
+            const sumRaw = rawWidths.reduce((a,b) => a + b, 0) || 1;
+            const widths = rawWidths.map(w => (w / sumRaw) * 100);
+
+            // compute left offsets cumulatively from normalized widths
+            const leftOffsets = [];
+            let acc = 0;
+            widths.forEach((w, i) => { leftOffsets[i] = acc; acc += w; });
+
+            // render vertical bars for each block
+            dateBlocks.forEach(b => {
+                const pid = String(b.participant_id);
+                const pIdx = participantOrder.indexOf(pid);
+                if (pIdx === -1) return;
+                const p = participantsById[pid];
+
+                const calendarStartMinutes = startHour * 60;
+                const topPx = ((b.startMinutes - calendarStartMinutes) / 60) * HOUR_HEIGHT;
+                const heightPx = ((b.endMinutes - b.startMinutes) / 60) * HOUR_HEIGHT;
+
+                const colLeftPercent = leftOffsets[pIdx] || 0;
+                const colWidthPercent = widths[pIdx] || basePercent;
+
+                const bar = document.createElement('div');
+                bar.className = 'availability-bar';
+                bar.style.top = Math.max(0, topPx) + 'px';
+                bar.style.height = Math.max(8, heightPx) + 'px';
+                bar.style.left = `${colLeftPercent}%`;
+                bar.style.width = `${colWidthPercent}%`;
+                bar.style.background = (p && p.color) ? p.color : '#6c63ff';
+                bar.dataset.blockId = b.id;
+                bar.dataset.participantId = b.participant_id;
+                bar.addEventListener('click', (ev)=>{ ev.stopPropagation(); openEditBlockPopup(b); });
+                hours.appendChild(bar);
+            });
+
+            // Compute fully-available intervals (everyone available) and render opaque green overlay
+            if (participantOrder.length > 0){
+                function mergeIntervals(intervals){
+                    if (!intervals.length) return [];
+                    intervals.sort((a,b)=>a[0]-b[0]);
+                    const res = [intervals[0].slice()];
+                    for (let i=1;i<intervals.length;i++){
+                        const [s,e] = intervals[i];
+                        const last = res[res.length-1];
+                        if (s <= last[1]) last[1] = Math.max(last[1], e); else res.push([s,e]);
+                    }
+                    return res;
+                }
+
+                const perParticipantAvail = {};
+                participantOrder.forEach(pid => {
+                    const ints = dateBlocks.filter(b=>String(b.participant_id)===pid).map(b=>[b.startMinutes, b.endMinutes]);
+                    perParticipantAvail[pid] = mergeIntervals(ints);
+                });
+
+                // intersect intervals across participants
+                let common = null;
+                for (const pid of participantOrder){
+                    const ints = perParticipantAvail[pid];
+                    if (common === null) { common = ints.slice(); continue; }
+                    const next = [];
+                    for (const a of common) for (const b of ints){
+                        const s = Math.max(a[0], b[0]);
+                        const e = Math.min(a[1], b[1]);
+                        if (s < e) next.push([s,e]);
+                    }
+                    common = mergeIntervals(next);
+                }
+
+                if (common && common.length){
+                    common.forEach(iv => {
+                        const s = iv[0]; const e = iv[1];
+                        const calendarStartMinutes = startHour * 60;
+                        const topPx = ((s - calendarStartMinutes) / 60) * HOUR_HEIGHT;
+                        const heightPx = ((e - s) / 60) * HOUR_HEIGHT;
+                        const overlay = document.createElement('div');
+                        overlay.className = 'availability-block all-available';
+                        overlay.style.top = Math.max(0, topPx) + 'px';
+                        overlay.style.height = Math.max(8, heightPx) + 'px';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100%';
+                        overlay.style.zIndex = '20';
+                        hours.appendChild(overlay);
+                    });
+                }
+            }
+            body.appendChild(dayCol);
+        }
+
+        grid.appendChild(monthContainer);
+
+        // advance to next day after this segment
+        cur = new Date(segEnd);
+        cur.setDate(cur.getDate() + 1);
     }
 }
-
-    dates.forEach((d, idx) => {
-        const dayStr = d.toISOString().slice(0,10);
-
-        // determine if this date is within the calendar's configured start/end
-        const inRange = (d >= start && d <= end);
-
-        const dayCol = document.createElement('div');
-        dayCol.className = 'calendar-day';
-
-        const header = document.createElement('div');
-        header.className = 'day-header';
-        header.textContent = inRange ? formatDateLabel(d) : '';
-
-        const body = document.createElement('div');
-        body.className = 'day-body';
-        if (!inRange) dayCol.classList.add('outside-range');
-
-        const hours = document.createElement('div');
-        hours.className = 'hours';
-        hours.style.height = (HOURS * HOUR_HEIGHT) + 'px';
-
-        for (let i = 0; i < HOURS; i++){
-            const hour = startHour + i;
-            const hr = document.createElement('div');
-            hr.className = 'hour-row';
-            // show label on top-left of each hour
-            const lbl = document.createElement('div');
-            lbl.className = 'hour-label';
-            lbl.textContent = (hour).toString().padStart(2,'0') + ':00';
-            hr.appendChild(lbl);
-            hours.appendChild(hr);
-        }
-
-        // place availability blocks for this date (only if inRange)
-        if (inRange){
-            const dayBlocks = blocksByDate[dayStr] || [];
-            dayBlocks.forEach(b => {
-            const p = participantsMap[b.participant_id];
-            const color = (p && p.color) ? p.color : '#333';
-            const status = b.status || 'available';
-
-            const [sh, sm] = (b.start_time || '00:00').split(':').map(Number);
-            const [eh, em] = (b.end_time || '00:00').split(':').map(Number);
-            const startMin = sh * 60 + sm;
-            const endMin = eh * 60 + em;
-
-            // clip to visible meeting hours range
-            const visibleStart = Math.max(startMin, startHour * 60);
-            const visibleEnd = Math.min(endMin, (endHour + 1) * 60);
-            if (visibleEnd <= visibleStart) return; // nothing to show in visible range
-
-            const top = ((visibleStart - startHour*60) / 60) * HOUR_HEIGHT;
-            const height = Math.max(6, ((visibleEnd - visibleStart) / 60) * HOUR_HEIGHT);
-
-            const blockEl = document.createElement('div');
-            blockEl.className = 'availability-block';
-            blockEl.style.top = top + 'px';
-            blockEl.style.height = height + 'px';
-            blockEl.style.background = color;
-            blockEl.style.opacity = (status === 'maybe') ? '0.5' : '1';
-            blockEl.textContent = (p && p.name) ? p.name : 'Participant';
-            if (b.id) blockEl.dataset.blockId = b.id;
-
-            // click to edit
-            blockEl.addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                openEditBlockPopup(b);
-            });
-
-                    hours.appendChild(blockEl);
-            });
-        }
-
-        body.appendChild(hours);
-
-        dayCol.appendChild(header);
-        dayCol.appendChild(body);
-
-        inner.appendChild(dayCol);
-    });
-
-    grid.appendChild(inner);
-
-
 
 

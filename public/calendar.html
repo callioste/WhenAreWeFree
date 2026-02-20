@@ -63,36 +63,49 @@
             <div class="popupContent">
                 <span class="closeAvailabilityBtn">&times;</span>
 
-                <h2 id="availabilityTitle">Add availability block</h2>
+                <h2>Add availability block</h2>
                 <div class="popupContainer"> 
-                    <input type="hidden" id="availabilityId">
-
                     <label for="participantSelect">Participant:</label>
                     <select id="participantSelect"></select>
 
                     <div style="height:8px"></div>
 
                     <label for="startTime">Start (date & time):</label>
-                    <input type="datetime-local" id="startTime">
+                    <input type="datetime-local" id="startTime" step="1800">
 
                     <label for="endTime">End (date & time):</label>
-                    <input type="datetime-local" id="endTime">
-
-                    <div class="availabilityRow">
-                        <label class="radioOption">
-                            <input type="radio" name="availabilityStatus" value="available" checked>
-                            <span>Fully available</span>
-                        </label>
-
-                        <label class="radioOption">
-                            <input type="radio" name="availabilityStatus" value="maybe">
-                            <span>Maybe</span>
-                        </label>
-                    </div>
+                    <input type="datetime-local" id="endTime" step="1800">
 
                     <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
                         <button id="addavailabilityBtn" class="optionButton"> Save </button>
-                        <button id="deleteAvailabilityBtn" class="optionButton" style="background:#c0392b;"> Delete </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popup for editing availability block -->
+        <div id="editAvailabilityPopup" class="popup">
+            <div class="popupContent">
+                <span class="closeEditAvailabilityBtn">&times;</span>
+
+                <h2>Edit availability block</h2>
+                <div class="popupContainer"> 
+                    <input type="hidden" id="editAvailabilityId">
+
+                    <label for="editParticipantSelect">Participant:</label>
+                    <select id="editParticipantSelect"></select>
+
+                    <div style="height:8px"></div>
+
+                    <label for="editStartTime">Start (date & time):</label>
+                    <input type="datetime-local" id="editStartTime" step="1800">
+
+                    <label for="editEndTime">End (date & time):</label>
+                    <input type="datetime-local" id="editEndTime" step="1800">
+
+                    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+                        <button id="updateAvailabilityBtn" class="optionButton"> Save </button>
+                        <button id="deleteAvailabilityBtn" class="optionButton" style="background-color:#e74c3c;"> Delete </button>
                     </div>
                 </div>
             </div>

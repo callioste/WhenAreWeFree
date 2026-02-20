@@ -1,13 +1,13 @@
 import express from 'express';
 import db from '../db.js';
 
-const colors = ["#f94144","#f3722c","#f8961e","#f9844a","#f9c74f","#90be6d","#43aa8b","#4d908e","#577590","#277da1"]
+const colors = ["#f94144","#f3722c","#f8961e","#f9c74f","#90be6d","#43aa8b","#4d908e","#577590","#277da1"]
 
 const router = express.Router();
 
 // Create a new participant
 router.post('/', (req, res) => {
-    const { name, calendar_token } = req.body;
+    const { name, calendar_token, set_as_owner } = req.body;
 
     if (!name || !calendar_token) {
         return res.status(400).json({ error: 'Missing required fields' });
@@ -45,12 +45,41 @@ router.post('/', (req, res) => {
         VALUES (?, ?, ?)
     `).run(calendar.id, name, color);
 
-    res.status(201).json({ id: result.lastInsertRowid, name, color });
+    const newId = result.lastInsertRowid;
+
+    if (set_as_owner) {
+        db.prepare('UPDATE calendars SET owner_participant_id = ? WHERE id = ?').run(newId, calendar.id);
+    }
+
+    res.status(201).json({ id: newId, name, color });
 });
 
-// Delete a participant
+// Delete a participant (only calendar owner can delete participants)
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
+    const requesterId = req.query.requester_id;
+
+    if (!requesterId) {
+        return res.status(400).json({ error: 'Missing requester_id query parameter' });
+    }
+
+    const participant = db.prepare('SELECT calendar_id FROM participants WHERE id = ?').get(id);
+
+    if (!participant) {
+        return res.status(404).json({ error: 'Participant not found' });
+    }
+
+    const calendar = db.prepare('SELECT owner_participant_id FROM calendars WHERE id = ?').get(participant.calendar_id);
+
+    if (!calendar) {
+        return res.status(404).json({ error: 'Calendar not found' });
+    }
+
+    // Only calendar owner may delete participants
+    if (String(calendar.owner_participant_id) !== String(requesterId)) {
+        return res.status(403).json({ error: 'Tylko twórca kalendarza może usuwać uczestników' });
+    }
+
     const result = db.prepare('DELETE FROM participants WHERE id = ?').run(id);
 
     if (result.changes === 0) {

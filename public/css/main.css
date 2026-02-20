@@ -263,7 +263,7 @@ body {
     box-shadow: 0 6px 14px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    height: 520px; /* fixed viewport for vertical scrolling inside */
+    height: auto;
 }
 
 .day-header {
@@ -308,6 +308,7 @@ body {
     top: 2px;
     font-size: 11px;
     color: #666;
+    z-index: 10010; /* ensure hour labels render above availability bars */
 }
 
 .availability-block {
@@ -319,6 +320,36 @@ body {
     color: white;
     font-size: 12px;
     overflow: hidden;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    z-index: 1; /* keep blocks under hour labels and popups */
+}
+
+/* ensure blocks don't overflow their container horizontally when using percentage left/width */
+.hours { position: relative; }
+.availability-block { box-sizing: border-box; }
+
+/* All-available overlay (green) */
+.availability-block.all-available {
+    background: linear-gradient(90deg, rgba(46,204,113,1), rgba(46,204,113,1));
+    opacity: 0.8;
+    pointer-events: none;
+    left: 0 !important;
+    width: 100% !important;
+}
+
+/* vertical availability bars (per participant) */
+.availability-bar {
+    position: absolute;
+    border-radius: 4px;
+    padding: 0 4px;
+    color: rgba(255,255,255,0.9);
+    font-size: 11px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    z-index: 2;
+    box-sizing: border-box;
+    border-right: 1px solid rgba(255,255,255,0.3);
 }
 
 /* ====== POPUP ====== */
@@ -335,6 +366,7 @@ body {
     visibility: hidden;
     opacity: 0;
     transition: 0.3s ease;
+    z-index: 100000; /* keep popups above all calendar elements */
 }
 
 .popup.active {
@@ -350,6 +382,7 @@ body {
     width: 320px;
     text-align: center;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    z-index: 100001;
 }
 
 #popup .popupContent input {
@@ -431,6 +464,24 @@ body {
     border: 1px solid #ccc;
 }
 
+#editAvailabilityPopup .popupContent {
+    background: white;
+    position: relative; 
+    padding: 40px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+#editAvailabilityPopup .popupContent input {
+    width: 100%;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
 .coderow {
     display: flex;
     align-items: center;
@@ -448,7 +499,8 @@ body {
     padding: 6px 14px;
 }
 
-.closeAvailabilityBtn {
+.closeAvailabilityBtn,
+.closeEditAvailabilityBtn {
     position: absolute;
     top: 12px;
     right: 15px;
@@ -456,6 +508,12 @@ body {
     cursor: pointer;
     color: #888;
     transition: 0.2s ease;
+}
+
+.closeAvailabilityBtn:hover,
+.closeEditAvailabilityBtn:hover {
+    color: #7029A6;
+    transform: scale(1.2);
 }
 
 .availabilityRow {
@@ -511,6 +569,10 @@ body {
 }
 
 /* Calendar Grid */
+.calendar-main {
+    flex: 1;
+}
+
 .calendar-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -525,8 +587,9 @@ body {
 
 .calendar-day {
     border: 1px solid #ddd;
-    min-height: 220px;
-    position: relative;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .calendar-day.empty {
@@ -537,10 +600,12 @@ body {
 .day-header {
     padding: 6px;
     font-weight: 600;
+    border-bottom: 1px solid #eee;
 }
 
 .hours {
     position: relative;
+    box-sizing: border-box;
 }
 
 .hour-row {
@@ -548,31 +613,23 @@ body {
     border-top: 1px solid #eee;
 }
 
-.calendar-grid-wrapper {
-    display: flex;
-}
-
-.hours-rail {
-    width: 70px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    padding-right: 10px;
-}
-
-.hour-rail-label {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    font-size: 12px;
-    color: #666;
-    box-sizing: border-box;
-    padding-top: 2px;
-}
-
 .delete-btn:hover {
     color: red;
     opacity: 1;
+}
+
+.calendar-month-label {
+    font-size: 1.8rem;
+    margin-bottom: 40px;
+    padding-top: 40px;
+    color: #7029A6;
+    font-family: Sn_Pro_SemiBold, sans-serif;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.calendar-weekday {
+    font-family: Sn_pro_Regular, sans-serif;
 }
 
 @media (max-width: 500px) {

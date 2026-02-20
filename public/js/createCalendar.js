@@ -47,7 +47,8 @@ if (form) {
 
     try {
       const res = await createCalendar(data);
-      window.location.href = `calendar.html?token=${res.token}`;
+      // mark created so calendar view knows to prompt the creator to join as owner
+      window.location.href = `calendar.html?token=${res.token}&created=1`;
     } catch (err) {
       alert('Create failed: ' + (err.message || err));
     }

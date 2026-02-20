@@ -65,10 +65,10 @@ export async function createParticipant(data){
     return await res.json();
 }
 
-export async function deleteParticipant(id, token){
+export async function deleteParticipant(id, requesterId){
     let url = `${BASE_URL}/participants/${id}`;
-    if (token) {
-        url += `?token=${encodeURIComponent(token)}`;
+    if (requesterId) {
+        url += `?requester_id=${encodeURIComponent(requesterId)}`;
     }
 
     const res = await fetch(url, {
@@ -83,22 +83,35 @@ export async function deleteParticipant(id, token){
 }
 
 // availabilityBlocks API (note endpoint uses dash to match server)
-export async function createavailabilityBlock(data){
-    const res = await fetch(`${BASE_URL}/availability-blocks`, {
+export async function createavailabilityBlock(data, requesterId){
+    let url = `${BASE_URL}/availability-blocks`;
+    if (requesterId) url += `?requester_id=${encodeURIComponent(requesterId)}`;
+
+    const res = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
-    }); 
+        body: JSON.stringify({
+            participant_id: data.participant_id,
+            start_date: data.start_date,
+            start_time: data.start_time,
+            end_date: data.end_date,
+            end_time: data.end_time,
+        })
+    });
+
     if (!res.ok){
         throw new Error(await res.text() || 'Failed to create availability block');
     }
     return await res.json();
 }
 
-export async function deleteavailabilityBlock(id){
-    const res = await fetch(`${BASE_URL}/availability-blocks/${id}`, {
+export async function deleteavailabilityBlock(id, requesterId){
+    let url = `${BASE_URL}/availability-blocks/${id}`;
+    if (requesterId) url += `?requester_id=${encodeURIComponent(requesterId)}`;
+
+    const res = await fetch(url, {
         method: 'DELETE'
     });
 
@@ -108,13 +121,28 @@ export async function deleteavailabilityBlock(id){
     return await res.json();
 }
 
-export async function updateavailabilityBlock(id, date, startTime, endTime, status){
-    const res = await fetch(`${BASE_URL}/availability-blocks/${id}`, {
+export async function updateavailabilityBlock(
+    id,
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    requesterId
+){
+    let url = `${BASE_URL}/availability-blocks/${id}`;
+    if (requesterId) url += `?requester_id=${encodeURIComponent(requesterId)}`;
+
+    const res = await fetch(url, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ date, start_time: startTime, end_time: endTime, status })
+        body: JSON.stringify({
+            start_date: startDate,
+            start_time: startTime,
+            end_date: endDate,
+            end_time: endTime,
+        })
     });
 
     if (!res.ok){

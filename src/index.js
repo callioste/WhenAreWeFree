@@ -21,6 +21,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/calendars', calendarRoutes);
 app.use('/participants', participantRoutes);
 app.use('/busy-blocks', busyBlockRoutes);
+// Mount the same router on the expected frontend path to avoid 404s
+app.use('/availability-blocks', busyBlockRoutes);
 
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
