@@ -45,6 +45,14 @@ if (form) {
       return;
     }
 
+    // validate meeting hours
+    if (data.start_hour !== undefined && data.end_hour !== undefined) {
+      if (data.end_hour <= data.start_hour) {
+        alert("Meeting hours end must be after meeting hours start.");
+        return;
+      }
+    }
+
     try {
       const res = await createCalendar(data);
       // mark created so calendar view knows to prompt the creator to join as owner
@@ -71,6 +79,11 @@ function populateHourSelectsCreate(){
   // ensure end > start
   startHourSelect.addEventListener('change', ()=>{
     if (Number(startHourSelect.value) >= Number(endHourSelect.value)) {
+      endHourSelect.value = String(Math.min(Number(startHourSelect.value)+1,23));
+    }
+  });
+  endHourSelect.addEventListener('change', ()=>{
+    if (Number(endHourSelect.value) <= Number(startHourSelect.value)) {
       endHourSelect.value = String(Math.min(Number(startHourSelect.value)+1,23));
     }
   });

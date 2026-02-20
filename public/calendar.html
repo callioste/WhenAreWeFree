@@ -13,7 +13,6 @@
             <h1> WhenAreWeFree </h1>
             <nav>
                 <a href="/"> Home </a>
-                <a href="/how-to-use"> How to use </a>
             </nav>
         </div>
         <div class="mainContainerCalendar">
@@ -66,17 +65,17 @@
                 <h2>Add availability block</h2>
                 <div class="popupContainer"> 
                     <label for="participantSelect">Participant:</label>
-                    <select id="participantSelect"></select>
+                    <select id="participantSelect" class="popup-select"></select>
 
-                    <div style="height:8px"></div>
+                    <div class="popup-spacer"></div>
 
-                    <label for="startTime">Start (date & time):</label>
-                    <input type="datetime-local" id="startTime" step="1800">
+                    <label for="startTime">Start time:</label>
+                    <input type="datetime-local" id="startTime" step="1800" class="datetime-local-input">
 
-                    <label for="endTime">End (date & time):</label>
-                    <input type="datetime-local" id="endTime" step="1800">
+                    <label for="endTime">End time:</label>
+                    <input type="datetime-local" id="endTime" step="1800" class="datetime-local-input">
 
-                    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+                    <div class="popup-button-row">
                         <button id="addavailabilityBtn" class="optionButton"> Save </button>
                     </div>
                 </div>
@@ -93,19 +92,19 @@
                     <input type="hidden" id="editAvailabilityId">
 
                     <label for="editParticipantSelect">Participant:</label>
-                    <select id="editParticipantSelect"></select>
+                    <select id="editParticipantSelect" class="popup-select"></select>
 
-                    <div style="height:8px"></div>
+                    <div class="popup-spacer"></div>
 
-                    <label for="editStartTime">Start (date & time):</label>
-                    <input type="datetime-local" id="editStartTime" step="1800">
+                    <label for="editStartTime">Start time:</label>
+                    <input type="datetime-local" id="editStartTime" step="1800" class="datetime-local-input">
 
-                    <label for="editEndTime">End (date & time):</label>
-                    <input type="datetime-local" id="editEndTime" step="1800">
+                    <label for="editEndTime">End time:</label>
+                    <input type="datetime-local" id="editEndTime" step="1800" class="datetime-local-input">
 
-                    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+                    <div class="popup-button-row">
                         <button id="updateAvailabilityBtn" class="optionButton"> Save </button>
-                        <button id="deleteAvailabilityBtn" class="optionButton" style="background-color:#e74c3c;"> Delete </button>
+                        <button id="deleteAvailabilityBtn" class="optionButton delete-availability-btn"> Delete </button>
                     </div>
                 </div>
             </div>

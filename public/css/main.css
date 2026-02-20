@@ -1,3 +1,7 @@
+/* ====================================== */
+/*           FONT DECLARATIONS            */
+/* ====================================== */
+
 @font-face {
     font-family: Lobster;
     src: url(../fonts/Lobster-Regular.ttf);
@@ -18,6 +22,10 @@
     src: url(../fonts/SN_Pro/static/SNPro-SemiBold.ttf);
 }
 
+/* ====================================== */
+/*           GLOBAL STYLES                */
+/* ====================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -29,6 +37,10 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+/* ====================================== */
+/*           NAVIGATION BAR               */
+/* ====================================== */
 
 .navigationBar {
     display: flex;
@@ -54,6 +66,10 @@ body {
     font-weight: 600;
 }
 
+/* ====================================== */
+/*        HOME PAGE - MAIN CONTAINER      */
+/* ====================================== */
+
 .mainContainer {
     display: flex;
     flex-direction: column;
@@ -68,6 +84,10 @@ body {
     color: #7029A6;
     margin-bottom: 3%;
 }
+
+/* ====================================== */
+/*       HOME PAGE - OPTION BLOCKS        */
+/* ====================================== */
 
 .options {
     display: flex;
@@ -98,6 +118,10 @@ body {
     color: black;
 }
 
+/* ====================================== */
+/*      HOME PAGE - OPTION BUTTONS        */
+/* ====================================== */
+
 .optionButton {
     padding: 10px 20px;
     font-size: 13px;
@@ -113,6 +137,60 @@ body {
 .optionButton:hover {
     background-color: #5a1f7a;
     transform: scale(1.05);
+}
+
+#editBtn {
+    border: #7029A6 2px solid; 
+    background: transparent;
+    color: #7029A6;
+}
+
+#copyBtn {
+    font-size: 13px;
+    padding: 6px 14px;
+}
+
+.delete-availability-btn {
+    background-color: #e74c3c;
+}
+
+/* ====================================== */
+/*       CREATE CALENDAR - FORM           */
+/* ====================================== */
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+}
+
+.fields h3 {
+    font-family: SN_Pro_Regular, sans-serif;
+    font-size: 18px;
+    color: black;
+    margin: 0;
+}
+
+.fields input {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    font-family: SN_Pro_Regular, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.fields select {
+    width: 100%;
+    padding: 10px 30px 10px 10px;
+    font-size: 13px;
+    font-family: SN_Pro_Regular, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .textInput {
@@ -131,36 +209,30 @@ body {
     width: 100%;
 }
 
-.fields {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    width: 100%;
-    max-width: 600px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    padding: 50px;
-}
-
-.fields h3 {
-    font-family: Sn_Pro_Regular, sans-serif;
-    font-size: 20px;
-    color: black;
-}
-
-.fields input {
-    padding: 10px;
-    font-size: 13px;
-    font-family: SN_Pro_Regular, sans-serif;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
 .dateInputs {
     display: flex;
-    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
 }
 
-/* ====== CALENDAR PAGE ====== */
+.dateInputs > div {
+    flex: 1;
+}
+
+.meetingHoursInputs {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.meetingHoursInputs > div {
+    flex: 1;
+}
+
+/* ====================================== */
+/*        CALENDAR PAGE - HEADER          */
+/* ====================================== */
 
 .mainContainerCalendar {
     display: flex;
@@ -192,6 +264,22 @@ body {
     justify-content: space-between;
 }
 
+.coderow {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+#calendarCode {
+    font-size: 16px;
+    font-family: SN_Pro_Regular, sans-serif;
+}
+
+/* ====================================== */
+/*    CALENDAR PAGE - MAIN CONTAINER      */
+/* ====================================== */
+
 .calendarContainer {
     display: flex;
     gap: 40px;
@@ -199,7 +287,9 @@ body {
     width: 100%;
 }
 
-/* Participants panel */
+/* ====================================== */
+/*    CALENDAR PAGE - PARTICIPANTS        */
+/* ====================================== */
 
 .Participants {
     flex: 1;
@@ -224,7 +314,27 @@ body {
     font-family: SN_Pro_Regular, sans-serif;
 }
 
-/* Calendar panel */
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.color-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.participant-name {
+    color: black;
+    font-weight: 500;
+}
+
+/* ====================================== */
+/*    CALENDAR PAGE - CALENDAR VIEW       */
+/* ====================================== */
 
 .calendarView {
     flex: 3;
@@ -241,14 +351,22 @@ body {
     margin-bottom: 20px;
 }
 
+.calendar-month-label {
+    font-size: 1.8rem;
+    margin-bottom: 40px;
+    padding-top: 40px;
+    color: #7029A6;
+    font-family: Sn_Pro_SemiBold, sans-serif;
+    text-align: center;
+    text-transform: capitalize;
+}
+
 #calendarGrid {
     margin-top: 20px;
     min-height: 300px;
     background: #f7f3fb;
     border-radius: 10px;
 }
-
-/* Scrollable date grid */
 
 #calendarGrid .grid-inner {
     display: grid;
@@ -257,6 +375,30 @@ body {
     padding: 8px;
 }
 
+.calendar-main {
+    flex: 1;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+}
+
+.calendar-weekday {
+    font-family: SN_Pro_Regular, sans-serif;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+/* ====================================== */
+/*    CALENDAR PAGE - DAY CELLS           */
+/* ====================================== */
+
 .calendar-day {
     background: white;
     border-radius: 8px;
@@ -264,21 +406,13 @@ body {
     display: flex;
     flex-direction: column;
     height: auto;
+    border: 1px solid #ddd;
+    min-height: 300px;
 }
 
-.day-header {
-    padding: 10px;
-    font-weight: 700;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-    background: linear-gradient(180deg, rgba(112,41,166,0.06), transparent);
-}
-
-.day-body {
-    padding: 0;
-    overflow-y: auto;
-    position: relative;
-    flex: 1;
+.calendar-day.empty {
+    border: none;
+    background: transparent;
 }
 
 .calendar-day.outside-range {
@@ -290,9 +424,31 @@ body {
     background: #f7f3fb;
 }
 
+.day-header {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    background: linear-gradient(180deg, rgba(112,41,166,0.06), transparent);
+    font-family: SN_Pro_Light, sans-serif;
+}
+
+.day-body {
+    padding: 0;
+    overflow-y: auto;
+    position: relative;
+    flex: 1;
+}
+
+/* ====================================== */
+/*    CALENDAR PAGE - HOURS & TIME        */
+/* ====================================== */
+
 .hours {
     position: relative;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .hour-row {
@@ -306,10 +462,15 @@ body {
     position: absolute;
     left: 6px;
     top: 2px;
+    font-family: SN_Pro_Light, sans-serif;
     font-size: 11px;
     color: #666;
-    z-index: 10010; /* ensure hour labels render above availability bars */
+    z-index: 10010;
 }
+
+/* ====================================== */
+/*    CALENDAR PAGE - AVAILABILITY        */
+/* ====================================== */
 
 .availability-block {
     position: absolute;
@@ -322,14 +483,10 @@ body {
     overflow: hidden;
     transition: transform 0.12s ease, opacity 0.12s ease;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    z-index: 1; /* keep blocks under hour labels and popups */
+    z-index: 1;
+    box-sizing: border-box;
 }
 
-/* ensure blocks don't overflow their container horizontally when using percentage left/width */
-.hours { position: relative; }
-.availability-block { box-sizing: border-box; }
-
-/* All-available overlay (green) */
 .availability-block.all-available {
     background: linear-gradient(90deg, rgba(46,204,113,1), rgba(46,204,113,1));
     opacity: 0.8;
@@ -338,7 +495,6 @@ body {
     width: 100% !important;
 }
 
-/* vertical availability bars (per participant) */
 .availability-bar {
     position: absolute;
     border-radius: 4px;
@@ -352,7 +508,9 @@ body {
     border-right: 1px solid rgba(255,255,255,0.3);
 }
 
-/* ====== POPUP ====== */
+/* ====================================== */
+/*              POPUPS                    */
+/* ====================================== */
 
 .popup {
     font-family: SN_Pro_Regular, sans-serif;
@@ -362,11 +520,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
     visibility: hidden;
     opacity: 0;
     transition: 0.3s ease;
-    z-index: 100000; /* keep popups above all calendar elements */
+    z-index: 100000;
 }
 
 .popup.active {
@@ -393,53 +550,6 @@ body {
     border: 1px solid #ccc;
 }
 
-.closeBtn {
-    position: absolute;
-    top: 12px;
-    right: 15px;
-    font-size: 22px;
-    cursor: pointer;
-    color: #888;
-    transition: 0.2s ease;
-}
-
-.closeBtn:hover {
-    color: #7029A6;
-    transform: scale(1.2);
-}
-
-.mainContainerCalendar {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 95%;
-    padding: 40px 20px;
-}
-
-#editBtn {
-    border: #7029A6 2px solid; 
-    background: transparent;
-    color: #7029A6;
-}
-
-.participant-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 8px 0;
-}
-
-.color-box {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-}
-
-.participant-name {
-    color: black;
-    font-weight: 500;
-}
-
 #availabilityPopup .popupContent {
     background: white;
     position: relative; 
@@ -448,12 +558,6 @@ body {
     width: 320px;
     text-align: center;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-}
-
-.popupContainer {
-    display: flex;
-    flex-direction: column;
-    margin-top: 30px;
 }
 
 #availabilityPopup .popupContent input {
@@ -482,21 +586,36 @@ body {
     border: 1px solid #ccc;
 }
 
-.coderow {
+.popupContainer {
     display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 30px;   /* bliżej description */
+    flex-direction: column;
+    margin-top: 30px;
 }
 
-#calendarCode {
-    font-size: 16px;
-    font-family: SN_Pro_Regular, sans-serif;
+.popup-spacer {
+    height: 8px;
 }
 
-#copyBtn {
-    font-size: 13px;
-    padding: 6px 14px;
+.popup-button-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+    transition: 0.2s ease;
+}
+
+.closeBtn:hover {
+    color: #7029A6;
+    transform: scale(1.2);
 }
 
 .closeAvailabilityBtn,
@@ -516,48 +635,54 @@ body {
     transform: scale(1.2);
 }
 
-.availabilityRow {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin: 20px 0;
+/* ====================================== */
+/*          FORM INPUTS                   */
+/* ====================================== */
+
+.popup-select {
+    width: 100%;
+    padding: 10px 10px 10px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    font-family: SN_Pro_Regular, sans-serif;
 }
 
-.radioOption {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
+.datetime-local-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: SN_Pro_Regular, sans-serif;
     font-size: 14px;
 }
 
-/* Ukrycie defaultowego */
-.radioOption input[type="radio"] {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #bbb;
-    border-radius: 50%;
-    position: relative;
+.datetime-local-input::-webkit-calendar-picker-indicator {
     cursor: pointer;
-    transition: all 0.2s ease;
+    opacity: 0.7;
 }
 
-.radioOption input[type="radio"]:checked {
-    border-color: #6c63ff;
+.datetime-local-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
 }
 
-.radioOption input[type="radio"]:checked::after {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background: #5a1f7a;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.datetime-local-input::-webkit-datetime-edit-fields-wrapper {
+    font-family: SN_Pro_Regular, sans-serif;
 }
+
+.datetime-local-input::-webkit-datetime-edit-text,
+.datetime-local-input::-webkit-datetime-edit-month-field,
+.datetime-local-input::-webkit-datetime-edit-day-field,
+.datetime-local-input::-webkit-datetime-edit-year-field,
+.datetime-local-input::-webkit-datetime-edit-hour-field,
+.datetime-local-input::-webkit-datetime-edit-minute-field {
+    font-family: SN_Pro_Regular, sans-serif;
+    padding: 2px;
+}
+
+/* ====================================== */
+/*          DELETE BUTTONS                */
+/* ====================================== */
 
 .delete-btn {
     background: none;
@@ -568,72 +693,203 @@ body {
     padding-left: 10px;
 }
 
-/* Calendar Grid */
-.calendar-main {
-    flex: 1;
-}
-
-.calendar-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    font-weight: 600;
-}
-
-.calendar-body {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-}
-
-.calendar-day {
-    border: 1px solid #ddd;
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-}
-
-.calendar-day.empty {
-    border: none;
-    background: transparent;
-}
-
-.day-header {
-    padding: 6px;
-    font-weight: 600;
-    border-bottom: 1px solid #eee;
-}
-
-.hours {
-    position: relative;
-    box-sizing: border-box;
-}
-
-.hour-row {
-    height: 40px;
-    border-top: 1px solid #eee;
-}
-
 .delete-btn:hover {
     color: red;
     opacity: 1;
 }
 
-.calendar-month-label {
-    font-size: 1.8rem;
-    margin-bottom: 40px;
-    padding-top: 40px;
-    color: #7029A6;
-    font-family: Sn_Pro_SemiBold, sans-serif;
-    text-align: center;
-    text-transform: capitalize;
+/* ====================================== */
+/*          MEDIA QUERIES                 */
+/* ====================================== */
+
+/* Tablet and smaller */
+@media (max-width: 1024px) {
+    .calendarContainer {
+        flex-direction: column;
+    }
+
+    .Participants {
+        order: 2;
+    }
+
+    .calendarView {
+        order: 1;
+    }
+
+    #calendarGrid .grid-inner {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .navigationBar {
+        padding: 30px 20px;
+    }
+
+    .mainContainerCalendar {
+        padding: 30px 15px;
+    }
+
+    .CalendarHeader {
+        padding: 0 15px;
+    }
 }
 
-.calendar-weekday {
-    font-family: Sn_pro_Regular, sans-serif;
+/* Mobile landscape and smaller */
+@media (max-width: 768px) {
+    .options {
+        flex-direction: column;
+        gap: 30px;
+        max-width: 400px;
+    }
+
+    .option {
+        max-width: 100%;
+    }
+
+    .headerRow {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .buttonRow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .CalendarHeader h1 {
+        font-size: 1.5rem;
+    }
+
+    #calendarGrid .grid-inner {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dateInputs {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .dateInputs > div {
+        width: 100%;
+    }
+
+    .dateInputs input,
+    .dateInputs select {
+        width: 100%;
+    }
+
+    .meetingHoursInputs {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .meetingHoursInputs > div {
+        width: 100%;
+    }
+
+    .meetingHoursInputs select {
+        width: 100%;
+    }
+
+    .navigationBar h1 {
+        font-size: 1.5rem;
+    }
+
+    .navigationBar nav a {
+        font-size: 13px;
+        margin-left: 30px;
+    }
+
+    .fields {
+        padding: 30px 25px;
+    }
 }
 
+/* Mobile portrait */
 @media (max-width: 500px) {
     .inputRow {
         flex-direction: column;
+    }
+
+    .navigationBar {
+        padding: 20px 15px;
+        flex-direction: column;
+        gap: 15px;
+        height: auto;
+    }
+
+    .navigationBar nav a {
+        margin-left: 15px;
+        font-size: 12px;
+    }
+
+    .mainContainer {
+        padding: 20px;
+    }
+
+    .option {
+        padding: 40px 20px;
+        gap: 25px;
+    }
+
+    #calendarGrid .grid-inner {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .popup {
+        padding: 0 15px;
+    }
+
+    #popup .popupContent,
+    #availabilityPopup .popupContent,
+    #editAvailabilityPopup .popupContent {
+        width: 100%;
+        max-width: 320px;
+        padding: 30px 20px;
+    }
+
+    .fields {
+        padding: 25px 20px;
+    }
+
+    .calendarView,
+    .Participants {
+        padding: 20px;
+    }
+
+    .CalendarHeader h1 {
+        font-size: 1.25rem;
+    }
+
+    .coderow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .mainContainer h1 {
+        font-size: 1.5rem;
+    }
+
+    .option h3 {
+        font-size: 0.9rem;
+    }
+
+    .optionButton {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    .navigationBar h1 {
+        font-size: 1.2rem;
+    }
+
+    .fields h3 {
+        font-size: 16px;
     }
 }
