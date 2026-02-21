@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -7,9 +8,11 @@ import db from './db.js';
 import calendarRoutes from './routes/calendars.js';
 import participantRoutes from './routes/participants.js';
 import busyBlockRoutes from './routes/availabiltyBlocks.js';
+import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const port = Number(process.env.PORT) || 3000;
 
 const app = express();  
 
@@ -21,9 +24,11 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/calendars', calendarRoutes);
 app.use('/participants', participantRoutes);
 app.use('/busy-blocks', busyBlockRoutes);
-// Mount the same router on the expected frontend path to avoid 404s
 app.use('/availability-blocks', busyBlockRoutes);
 
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
 });

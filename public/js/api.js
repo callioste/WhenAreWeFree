@@ -82,7 +82,7 @@ export async function deleteParticipant(id, requesterId){
     return true; 
 }
 
-// availabilityBlocks API (note endpoint uses dash to match server)
+// availabilityBlocks API 
 export async function createavailabilityBlock(data, requesterId){
     let url = `${BASE_URL}/availability-blocks`;
     if (requesterId) url += `?requester_id=${encodeURIComponent(requesterId)}`;

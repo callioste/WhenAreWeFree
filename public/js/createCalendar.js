@@ -22,6 +22,7 @@ if (startInput && endInput) {
   });
 }
 
+// Form submit button handler
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -34,7 +35,7 @@ if (form) {
       end_date: fd.get('end_date')
     };
 
-    // optional meeting hours (hour selects) -> save hour as integer
+    // meeting hours ->
     const sh = fd.get('start_hour');
     const eh = fd.get('end_hour');
     if (sh) data.start_hour = Number(sh);

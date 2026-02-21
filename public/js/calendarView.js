@@ -8,16 +8,29 @@ if (!token) {
     window.location.href = "/";
 }
 
-// helper: local participant id stored per calendar token
+/* ====================================== */
+/*    Remember local participant ID       */
+/* ====================================== */
+
 function getLocalParticipantId(){
-    try{ const v = localStorage.getItem('participant:' + token); return v ? Number(v) : null;}catch(e){return null}
+    try{ 
+        const v = localStorage.getItem('participant:' + token); 
+        return v ? Number(v) : null;
+    }catch(e){
+        return null;
+    }
 }
 
 function setLocalParticipantId(id){
-    try{ localStorage.setItem('participant:' + token, String(id)); }catch(e){}
+    try{ 
+        localStorage.setItem('participant:' + token, String(id)); 
+    }catch(e){}
 }
 
-// Open popup for editing existing block
+/* ====================================== */
+/*    Availability Block Popups           */
+/* ====================================== */
+
 function openEditBlockPopup(block){
     const editPopup = document.getElementById('editAvailabilityPopup');
     const availabilityId = document.getElementById('editAvailabilityId');
@@ -36,7 +49,6 @@ function openEditBlockPopup(block){
     editPopup.classList.add('active');
 }
 
-// Reset popup for creating
 function openCreatePopup(){
     const addPopup = document.getElementById('availabilityPopup');
     const participantSelect = document.getElementById('participantSelect');
@@ -55,7 +67,8 @@ function openCreatePopup(){
     addPopup.classList.add('active');
 }
 
-// Handler for ADD popup save button
+// Add availability block button handler
+
 const addBtn = document.getElementById('addavailabilityBtn');
 if (addBtn){
     addBtn.addEventListener('click', async () => {
@@ -74,7 +87,6 @@ if (addBtn){
 
             if (s >= e) return alert('Start must be before end');
 
-            // Helper: round time to nearest :00 or :30
             function roundToHalfHour(timeStr) {
                 const [h, m] = timeStr.split(':').map(Number);
                 const rounded = m < 15 ? 0 : (m < 45 ? 30 : 60);
@@ -117,7 +129,8 @@ if (addBtn){
     });
 }
 
-// Handler for EDIT popup update button
+// Edit availability block handler
+
 const updateBtn = document.getElementById('updateAvailabilityBtn');
 if (updateBtn){
     updateBtn.addEventListener('click', async () => {
@@ -138,7 +151,6 @@ if (updateBtn){
 
             if (s >= e) return alert('Start must be before end');
 
-            // Helper: round time to nearest :00 or :30
             function roundToHalfHour(timeStr) {
                 const [h, m] = timeStr.split(':').map(Number);
                 const rounded = m < 15 ? 0 : (m < 45 ? 30 : 60);
@@ -182,7 +194,8 @@ if (updateBtn){
     });
 }
 
-// Handler for EDIT popup delete button
+// Delete availability block button handler (visible in edit popup)
+
 const delBtn = document.getElementById('deleteAvailabilityBtn');
 if (delBtn){
     delBtn.addEventListener('click', async () => {
@@ -202,9 +215,11 @@ if (delBtn){
     });
 }
 
+/* ============================= */
+/*    Populate Select Options    */
+/* ============================= */
 
-
-// populate participant select after loading calendar
+// Populate participant select dropdowns in add/edit availability popups with locally stored participants for this calendar (if any)
 function populateParticipantSelect(participants){
     const addSel = document.getElementById('participantSelect');
     const editSel = document.getElementById('editParticipantSelect');
@@ -221,19 +236,17 @@ function populateParticipantSelect(participants){
     });
 }
 
+// Populate hour selects in availability popups based on calendar settings (if any)
 function populateHourSelects(startHour, endHour){
     const s = document.getElementById('startHour');
     const e = document.getElementById('endHour');
     console.debug('populateHourSelects called', { startHour, endHour, startEl: !!s, endEl: !!e });
     if (!s || !e) return;
-    // ensure numeric
     startHour = Number(startHour) || 0;
     endHour = Number(endHour) || 23;
-    // if inverted, swap
     if (startHour > endHour){
         const tmp = startHour; startHour = endHour; endHour = tmp;
     }
-    // If elements are selects, populate options; if inputs, set min/max/step and defaults
     if (s.tagName === 'SELECT' && e.tagName === 'SELECT'){
         s.innerHTML = '';
         e.innerHTML = '';
@@ -244,17 +257,14 @@ function populateHourSelects(startHour, endHour){
             e.appendChild(opt2);
         }
         console.debug('populateHourSelects populated options', { startCount: s.children.length, endCount: e.children.length });
-        // sensible defaults
         s.value = String(startHour);
         e.value = String(Math.min(startHour+1, endHour));
     } else {
-        // assume numeric input
         try {
             s.type = 'number'; e.type = 'number';
         } catch (err) {}
         s.min = String(startHour); s.max = String(endHour); s.step = '1';
         e.min = String(startHour); e.max = String(endHour); e.step = '1';
-        // set sensible defaults and clamp
         if (!s.value) s.value = String(startHour);
         if (!e.value) e.value = String(Math.min(startHour+1, endHour));
         if (Number(s.value) < startHour) s.value = String(startHour);
@@ -264,9 +274,9 @@ function populateHourSelects(startHour, endHour){
     }
 }
 
-/* =========================
-   JOIN POPUP
-========================= */
+/* ========================= */
+/*     JOIN CALENDAR POPUP   */
+/* ========================= */
 
 const joinPopup = document.getElementById("popup");
 const joinBtn = document.getElementById("joinBtn");
@@ -313,22 +323,20 @@ if (joinBtn && joinPopup) {
     }
 }
 
-/* =========================
-   AVAILABILITY POPUP
-========================= */
+/* ========================= */
+/*     AVAILABILITY POPUP    */
+/* ========================= */
 
 const availabilityPopup = document.getElementById("availabilityPopup");
 const editBtn = document.getElementById("editBtn");
 
-// calendar date bounds (will be set when loading calendar)
 let calendarMinDate = null;
 let calendarMaxDate = null;
-// meeting hour bounds (will be set when loading calendar)
+
 let calendarStartHour = 0;
 let calendarEndHour = 23;
 
 function toDateTimeLocal(dateStr, timeStr = "00:00"){
-    // dateStr expected as YYYY-MM-DD, timeStr as HH:MM
     return `${dateStr}T${timeStr}`;
 }
 
@@ -337,9 +345,7 @@ if (editBtn && availabilityPopup) {
         const startInput = document.getElementById("startTime");
         const endInput = document.getElementById("endTime");
 
-        // ensure inputs exist and bounds are set; if not yet loaded, loadCalendar should set them
         if (calendarMinDate && startInput && endInput){
-            // set sensible defaults inside bounds
             if (!startInput.value) startInput.value = toDateTimeLocal(calendarMinDate, "09:00");
             if (!endInput.value) endInput.value = toDateTimeLocal(calendarMinDate, "10:00");
 
@@ -362,7 +368,6 @@ if (editBtn && availabilityPopup) {
     }
 }
 
-// Close button for edit popup
 const editAvailabilityPopup = document.getElementById("editAvailabilityPopup");
 if (editAvailabilityPopup) {
     const closeEditAvailabilityBtn = editAvailabilityPopup.querySelector(".closeEditAvailabilityBtn");
@@ -373,9 +378,9 @@ if (editAvailabilityPopup) {
     }
 }
 
-/* =========================
-   LOAD CALENDAR
-========================= */
+/* ========================= */
+/*     LOAD CALENDAR         */
+/* ========================= */
 
 loadCalendar();
 
@@ -408,25 +413,23 @@ async function loadCalendar() {
                 })
                 .join("");
 
-        // set availability popup date bounds from calendar
         if (data.calendar && data.calendar.start_date && data.calendar.end_date){
-            calendarMinDate = data.calendar.start_date; // YYYY-MM-DD
+            calendarMinDate = data.calendar.start_date; 
             calendarMaxDate = data.calendar.end_date;
 
             const startInput = document.getElementById("startTime");
             const endInput = document.getElementById("endTime");
 
-            // determine meeting hours from calendar (fallback to 0-23)
             const startHour = (typeof data.calendar.start_hour !== 'undefined') ? Number(data.calendar.start_hour) : 0;
             const endHour = (typeof data.calendar.end_hour !== 'undefined') ? Number(data.calendar.end_hour) : 23;
-            // expose to other handlers
+
             calendarStartHour = startHour;
             calendarEndHour = endHour;
 
             if (startInput){
                 startInput.min = toDateTimeLocal(calendarMinDate, String(startHour).padStart(2,'0')+":00");
                 startInput.max = toDateTimeLocal(calendarMaxDate, String(endHour).padStart(2,'0')+":00");
-                // clamp value or set sensible default
+                
                 if (!startInput.value) startInput.value = toDateTimeLocal(calendarMinDate, String(Math.min(9, endHour)).padStart(2,'0')+":00");
                 if (startInput.value < startInput.min) startInput.value = startInput.min;
                 if (startInput.value > startInput.max) startInput.value = startInput.max;
@@ -440,7 +443,7 @@ async function loadCalendar() {
                 if (endInput.value > endInput.max) endInput.value = endInput.max;
             }
 
-            // Set bounds for edit popup inputs
+           
             const editStartInput = document.getElementById("editStartTime");
             const editEndInput = document.getElementById("editEndTime");
 
@@ -453,9 +456,8 @@ async function loadCalendar() {
                 editEndInput.min = toDateTimeLocal(calendarMinDate, String(startHour).padStart(2,'0')+":01");
                 editEndInput.max = toDateTimeLocal(calendarMaxDate, String(endHour).padStart(2,'0')+":59");
             }
-                // populate hour selects
                 populateHourSelects(startHour, endHour);
-                // set date input bounds and defaults
+                
                 const startDateInput = document.getElementById('startDate');
                 const endDateInput = document.getElementById('endDate');
                 if (startDateInput){
@@ -468,8 +470,7 @@ async function loadCalendar() {
                     endDateInput.max = calendarMaxDate;
                     if (!endDateInput.value) endDateInput.value = calendarMinDate;
                 }
-            // render calendar grid for the date range, include participants and availability
-            // populate participant select used by availability popup
+            
             populateParticipantSelect(data.participants || []);
             const localId = getLocalParticipantId();
             const participantSelectEl = document.getElementById('participantSelect');
@@ -489,9 +490,10 @@ async function loadCalendar() {
     }
 }
 
-/* =========================
-   Delete Participant
-========================= */
+/* ============================================= */
+/*  PARTICIPANT LIST HANDLER (Delete button)     */
+/* ============================================= */
+
 const participantsListEl = document.getElementById("ParticipantsList");
 
 if (participantsListEl) {
@@ -515,9 +517,10 @@ if (participantsListEl) {
   });
 }
 
-/* =========================
-   Copy Calendar Code
-========================= */
+/* ============================= */
+/*    Copy calendar code button  */
+/* ============================= */
+
 const copyCodeBtn = document.getElementById("copyBtn");
 if (copyCodeBtn) {
     copyCodeBtn.addEventListener("click", () => {
@@ -529,7 +532,10 @@ if (copyCodeBtn) {
     });
 }
 
-// --- Calendar grid rendering ---
+/* ============================= */
+/*    Render Calendar Grid       */
+/* ============================= */
+
 function parseYMD(s){
     const [y,m,d] = s.split('-').map(Number);
     return new Date(y, m-1, d);
@@ -555,7 +561,7 @@ function renderCalendarGrid(startStr, endStr, participants = [], blocks = [], st
 
     const weekdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-    // iterate month-by-month and create a separate grid for each month intersecting the range
+
     let cur = new Date(start);
     while (cur <= end){
         const year = cur.getFullYear();
@@ -649,10 +655,10 @@ function renderCalendarGrid(startStr, endStr, participants = [], blocks = [], st
                     const blockStart = new Date(`${b.start_date || b.date}T${b.start_time}`);
                     const blockEnd   = new Date(`${b.end_date   || b.date}T${b.end_time}`);
 
-                    // jeśli blok w ogóle nie przecina się z tym dniem kalendarza
+                    // if block doesn't overlap with this day at all, skip it 
                     if (blockEnd <= dateStart || blockStart >= dateEnd) return null;
 
-                    // przycinamy do granic dnia kalendarza (NIE 00:00-23:59)
+                    // trim to calendar day boundaries (NOT 00:00-23:59)
                     const effectiveStart = new Date(Math.max(blockStart, dateStart));
                     const effectiveEnd   = new Date(Math.min(blockEnd, dateEnd));
 

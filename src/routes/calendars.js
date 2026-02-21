@@ -1,89 +1,108 @@
 import express from 'express';
-import db from '../db.js';
-import { v4 as uuidv4 } from 'uuid';
+import {
+    createCalendar,
+    getCalendarByToken,
+    deleteCalendarByToken,
+    updateCalendarByToken,
+    getFullCalendarByToken,
+    calendarTokenExists
+} from '../models/calendarModel.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 
 const router = express.Router();
 
 // Create a new calendar
-router.post('/', (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
     const { name, description, start_date, end_date, start_hour, end_hour } = req.body;
     const token = generateCode();
 
-    if(!name || !start_date || !end_date) {
+    if(!name || !start_date || !end_date || start_hour === undefined || end_hour === undefined) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const sHour = Number.isFinite(Number(start_hour)) ? parseInt(start_hour) : 0;
-    const eHour = Number.isFinite(Number(end_hour)) ? parseInt(end_hour) : 23;
+    const sHour = Number.isFinite(Number(start_hour)) ? parseInt(start_hour, 10) : NaN;
+    const eHour = Number.isFinite(Number(end_hour)) ? parseInt(end_hour, 10) : NaN;
 
-    const stmt = db.prepare(`
-        INSERT INTO calendars (name, description, start_date, end_date, start_hour, end_hour, token)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
+    if (!Number.isInteger(sHour) || !Number.isInteger(eHour)) {
+        return res.status(400).json({ error: 'Meeting hours are required and must be integers' });
+    }
 
-    const info = stmt.run(name, description, start_date, end_date, sHour, eHour, token);
+    if (sHour < 0 || sHour > 23 || eHour < 0 || eHour > 23) {
+        return res.status(400).json({ error: 'Meeting hours must be between 0 and 23' });
+    }
+
+    if (eHour <= sHour) {
+        return res.status(400).json({ error: 'Meeting hours end must be after meeting hours start' });
+    }
+
+    const info = createCalendar({
+        name,
+        description,
+        start_date,
+        end_date,
+        start_hour: sHour,
+        end_hour: eHour,
+        token
+    });
 
     res.status(201).json({ id: info.lastInsertRowid, token });
-});
+}));
 
 // Get calendar details by token
-router.get('/:token', (req, res) => {
+router.get('/:token', asyncHandler(async (req, res) => {
     const { token } = req.params; 
-    const stmt = db.prepare('SELECT * FROM calendars WHERE token = ?');
-    const calendar = stmt.get(token);      
+    const calendar = getCalendarByToken(token);
     
     if (!calendar) {
         return res.status(404).json({ error: 'Calendar not found' });
     }   
 
     res.json(calendar);
-});
+}));
 
 // Delete a calendar by token
-router.delete('/:token', (req, res) => {
+router.delete('/:token', asyncHandler(async (req, res) => {
     const { token } = req.params;
-    const stmt = db.prepare('DELETE FROM calendars WHERE token = ?');
-    const info = stmt.run(token);
+    const info = deleteCalendarByToken(token);
 
     if (info.changes === 0) {
         return res.status(404).json({ error: 'Calendar not found' });
     }   
 
     res.json({ success: true });
-});
+}));
 
 // Update calendar details by token
-router.put('/:token', (req, res) => {
+router.put('/:token', asyncHandler(async (req, res) => {
     const { token } = req.params;
     const { name, description, start_date, end_date, start_hour, end_hour } = req.body;
-    const stmt = db.prepare('UPDATE calendars SET name = ?, description = ?, start_date = ?, end_date = ?, start_hour = ?, end_hour = ? WHERE token = ?');
-    const info = stmt.run(name, description, start_date, end_date, start_hour, end_hour, token);
+    const info = updateCalendarByToken(token, {
+        name,
+        description,
+        start_date,
+        end_date,
+        start_hour,
+        end_hour
+    });
 
     if (info.changes === 0) {
         return res.status(404).json({ error: 'Calendar not found' });
     }
 
     res.json({ success: true });
-});
+}));
 
 // Get full calendar details including participants and availability blocks
-router.get('/:token/full', (req, res) => {
+router.get('/:token/full', asyncHandler(async (req, res) => {
     const { token } = req.params;
-    const calendarStmt = db.prepare('SELECT * FROM calendars WHERE token = ?');
-    const calendar = calendarStmt.get(token);
+    const fullCalendar = getFullCalendarByToken(token);
 
-    if (!calendar) {
+    if (!fullCalendar) {
         return res.status(404).json({ error: 'Calendar not found' });
-    }       
+    }
 
-    const participantsStmt = db.prepare('SELECT * FROM participants WHERE calendar_id = ?');
-    const participants = participantsStmt.all(calendar.id);     
-    const availabilityBlocksStmt = db.prepare('SELECT * FROM availability_blocks WHERE participant_id IN (SELECT id FROM participants WHERE calendar_id = ?)');
-    const availabilityBlocks = availabilityBlocksStmt.all(calendar.id);
-
-    res.json({ calendar, participants, availabilityBlocks });
-}
-);
+    res.json(fullCalendar);
+}));
 
 export default router;
 
@@ -95,7 +114,7 @@ function generateCode(length = 6) {
         result += chars[Math.floor(Math.random() * chars.length)];
     }
 
-    if (db.prepare('SELECT 1 FROM calendars WHERE token = ?').get(result)) {
+    if (calendarTokenExists(result)) {
         return generateCode(length); // Regenerate if code already exists   
     }       
 
