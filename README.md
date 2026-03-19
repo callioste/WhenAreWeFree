@@ -1,78 +1,96 @@
 # WhenAreWeFree
 
-Aplikacja do tworzenia i współdzielenia kalendarza dostępności. Umożliwia wybranie dogodnego dla wszsyt
+A web application for creating and sharing availability calendars. It allows users to easily find a common time slot for meetings or events.
 
-## Wymagania
+This project was created for university purposes as part of my learning process in backend development, with a focus on building REST APIs and working with databases.
 
-- Node.js
-- npm
+---
 
-## Instalacja
+## 📌 Features
 
-### 1) Zainstaluj zależności backendu
+- Create a shared availability calendar
+- Join a calendar using a unique token
+- Add and manage availability time blocks
+- Visualize overlapping availability across participants (common free time highlighted in green)
+
+---
+
+## 📌 Tech Stack
+
+- Backend: Node.js, Express
+- Database: SQLite
+- Frontend: HTML, CSS, JavaScript
+
+---
+
+## 📌 Installation
+
+In root directory:
 
 ```bash
 cd src
-npm install
+npm install 
 ```
 
-## Konfiguracja `.env`
+---
 
-Plik w katalogu głównym projektu:
+## 📌 Environment Variables
 
-```dotenv
-PORT=3000
-DB_PATH=data.db
+An .env file in the root directory:
+
+```env
+PORT = 3000
+DB_PATH = data.db
 ```
 
-- `PORT` – port serwera Express
-- `DB_PATH` – ścieżka do pliku SQLite
-
-## Uruchomienie
-
-Z katalogu root:
-
+## 📌 Run the App
 ```bash
 node src/index.js
 ```
 
-Po starcie serwer działa na:
+App will be available at:
 
-- `http://localhost:3000` (lub inny port z `.env`)
+```
+http://localhost:3000
+```
+(or another port defined in ```.env```)
 
-Frontend jest serwowany statycznie z katalogu `public`.
+---
 
-## Jak to działa
+## 📌 How It Works
 
-1. Użytkownik tworzy kalendarz (strona `create-calendar.html`).
-2. Backend zapisuje rekord w tabeli `calendars` i generuje `token`.
-3. Uczestnicy dołączają po kodzie (`token`) i są zapisywani w tabeli `participants`.
-4. Uczestnicy dodają bloki dostępności do tabeli `availability_blocks`.
-5. Widok kalendarza (`calendar.html`) pobiera pełne dane z API i renderuje siatkę z dostępnością. Zbieżności dostępności wszystkich użytkowników zaznaczają się na kolor zielony.
+1. A user creates a calendar
+2. A unique token is generated
+3. Participants join using the token
+4. Users add their availability
+5. The app displays overlapping free time
 
-## Struktura projektu
+---
 
-- `public/` – frontend (HTML/CSS/JS)
-- `src/routes/` – endpointy API
-- `src/models/` – operacje na bazie danych
-- `src/middleware/` – middleware (obsługa async + błędów)
-- `src/db.js` – inicjalizacja SQLite
+## 📌 Project Structure
 
-## API (przykładowe endpointy)
+- ```public/``` – frontend (UI)
 
-- `POST /calendars`
-- `GET /calendars/:token`
-- `PUT /calendars/:token`
-- `DELETE /calendars/:token`
-- `GET /calendars/:token/full`
-- `POST /participants`
-- `DELETE /participants/:id`
-- `POST /availability-blocks`
-- `PUT /availability-blocks/:id`
-- `DELETE /availability-blocks/:id`
+- ```src/routes/``` – API routes
 
-## Obsługa błędów
+- ```src/models/``` – database logic
 
-- Walidacja danych wejściowych w trasach (`400`, `403`, `404`)
-- Globalny middleware błędów w Express (`src/middleware/errorHandler.js`)
-- Middleware `asyncHandler` do przechwytywania błędów asynchronicznych
+- ```src/middleware/``` – error handling & async support
+
+- ```src/db.js``` – database setup
+
+---
+
+## 📌 API Overview
+
+- ```POST /calendars```
+
+- ```GET /calendars/:token```
+
+- ```GET /calendars/:token/full```
+
+- ```POST /participants```
+
+- ```POST /availability-blocks```
+
+
